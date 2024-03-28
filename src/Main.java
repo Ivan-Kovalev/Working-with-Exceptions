@@ -1,33 +1,34 @@
+import java.util.regex.Pattern;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
         checkAuthorise("Qwerty_123", "Qwerty_123", "Qwerty_123");
     }
 
+    private final static Pattern PATTERN = Pattern.compile("\\w+");
+
     public static void checkAuthorise(String login, String password, String confirmPassword) {
         try {
             checkSyntax(login, password, confirmPassword);
-        } catch (WrongLoginException e) {
-            System.out.println("Логин должен содержать до 20 символов только латинского алф. и нижние подчеркивания");
-        } catch (WrongPasswordException e) {
-            System.out.println("Пароль должен содержать до 20 символов только латинского алф. и нижние подчеркивания и совпадать с подтверждением пароля");
-        } finally {
-            System.out.println("Проверка завершена");
+        } catch (WrongLoginException | WrongPasswordException e) {
+            System.out.println(e.getMessage());
         }
     }
 
-    public static void checkSyntax(String login, String password, String confirmPassword) throws RuntimeException {
-        if (login.matches("\\w+") == false || login.length() > 20){
-            throw new WrongLoginException();
+    public static void checkSyntax(String login, String password, String confirmPassword) {
+        if (login == null || password == null || confirmPassword == null) {
+            throw new RuntimeException("Заполните все поля!");
         }
-        if (password.matches("\\w+") == false || password.length() > 20) {
-            throw new WrongPasswordException();
+        if (!PATTERN.matcher(login).matches() || login.length() > 20) {
+            throw new WrongLoginException("Логин должен содержать до 20 символов только латинского алф. и нижние подчеркивания");
         }
-        if (confirmPassword.equals(password) == false) {
-            throw new WrongPasswordException();
+        if (!PATTERN.matcher(password).matches() || password.length() > 20) {
+            throw new WrongPasswordException("Пароль должен содержать до 20 символов только латинского алф. и нижние подчеркивания");
         }
+        if (!confirmPassword.equals(password)) {
+            throw new WrongPasswordException("Пароли не совпадают");
+        }
+        System.out.println("Проверка завершена, авторизация пройдена!");
     }
 
 }
