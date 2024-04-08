@@ -10,7 +10,7 @@ public class Main {
     public static void checkAuthorise(String login, String password, String confirmPassword) {
         try {
             checkSyntax(login, password, confirmPassword);
-        } catch (WrongLoginException | WrongPasswordException e) {
+        } catch (RuntimeException e) {
             System.out.println(e.getMessage());
         }
     }
